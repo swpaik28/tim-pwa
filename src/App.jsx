@@ -1792,9 +1792,8 @@ export default function App() {
             {T.phiLines.map((line, i) => {
               const icons = ["💎","⚖️","🔑"];
               const bgs = [C.accentSoft, C.greenSoft, C.purpleSoft];
-              const delays = ["0s","0.15s","0.3s"];
               return (
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:12, marginBottom: i<2 ? 12 : 0, animationName:"fadeSlideIn", animationDuration:"0.5s", animationTimingFunction:"ease", animationDelay:delays[i], animationFillMode:"both" }}>
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:12, marginBottom: i<2 ? 12 : 0 }}>
                   <div style={{ width:32, height:32, borderRadius:10, background:bgs[i], display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:16 }}>
                     {icons[i]}
                   </div>
