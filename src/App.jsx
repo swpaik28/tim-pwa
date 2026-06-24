@@ -1884,13 +1884,11 @@ export default function App() {
           </div>
         </div>
       )}
-      <div style={{ background:C.surface, padding:"12px 20px 10px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.border}`, position:"sticky", top:0, zIndex:50 }}>
-        <span style={{ color:C.textMuted, fontSize:12, fontFamily:"monospace" }}>9:41</span>
-        <div style={{ display:"flex", gap:6, alignItems:"center" }}>
-          {totalWallet>0 && <span style={{ background:C.greenSoft, color:C.green, fontSize:10, padding:"2px 8px", borderRadius:20, fontWeight:600 }}>+{totalWallet}{T.unit}</span>}
-          <span style={{ color:C.textMuted, fontSize:12 }}>📶 🔋</span>
+      {totalWallet>0 && (
+        <div style={{ background:C.surface, padding:"10px 20px", display:"flex", justifyContent:"flex-end", alignItems:"center", borderBottom:`1px solid ${C.border}`, position:"sticky", top:0, zIndex:50 }}>
+          <span style={{ background:C.greenSoft, color:C.green, fontSize:11, padding:"3px 10px", borderRadius:20, fontWeight:600 }}>💰 {totalWallet}{T.unit}</span>
         </div>
-      </div>
+      )}
       {notif && (
         <div style={{ position:"fixed", top:60, left:"50%", transform:"translateX(-50%)", background:C.card, border:`1px solid ${C.green}`, borderRadius:12, padding:"12px 20px", zIndex:200, color:C.text, fontSize:13, fontWeight:600, maxWidth:340, boxShadow:`0 4px 24px ${C.green}33` }}>{notif}</div>
       )}
