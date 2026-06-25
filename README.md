@@ -1,53 +1,64 @@
-# Trust-in-Minutes
+# Trust In Minutes
 
-청소년 자기조절 학습 도구 — 공부에 투자한 만큼 보상을 공정하게.
+A student self-regulation tool — invest study time, earn rewards fairly.
 
-PWA(Progressive Web App)로, 스마트폰 홈화면에 아이콘으로 추가해 앱처럼 쓸 수 있습니다.
+Trust In Minutes is a Progressive Web App (PWA). Students can add it to their phone's home screen and use it like a native app — no app store required.
 
 ---
 
-## 로컬에서 실행하기
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-브라우저에서 `http://localhost:5173` 접속.
+Open `http://localhost:5173` in your browser.
 
-## 빌드
+## Build
 
 ```bash
 npm run build
 ```
 
-`dist/` 폴더에 배포용 파일이 생성됩니다.
+Production files are generated in the `dist/` folder.
 
 ---
 
-## Vercel 배포 방법
+## Deploy with Vercel
 
-1. 이 폴더를 GitHub repository에 올립니다.
-2. [vercel.com](https://vercel.com) 에 GitHub 계정으로 로그인합니다.
-3. **Add New → Project** 클릭 후 이 repository를 선택합니다.
-4. 프레임워크는 **Vite** 로 자동 인식됩니다. 그대로 **Deploy** 클릭.
-5. 약 1~2분 후 `https://[프로젝트명].vercel.app` URL이 생성됩니다.
-
----
-
-## 스마트폰 홈화면에 추가하기
-
-**iPhone (Safari):** 공유 버튼 → "홈 화면에 추가"
-**Android (Chrome):** 메뉴(⋮) → "홈 화면에 추가"
+1. Push this folder to a GitHub repository.
+2. Log in to [vercel.com](https://vercel.com) with your GitHub account.
+3. Click **Add New → Project** and select this repository.
+4. Vercel auto-detects **Vite**. Just click **Deploy**.
+5. After 1-2 minutes you'll get a URL like `https://[project].vercel.app`.
 
 ---
 
-## 데이터 저장
+## Add to your phone's home screen
 
-- 사용자 데이터는 기기의 브라우저(localStorage)에 저장됩니다.
-- 같은 기기·브라우저에서는 새로고침해도 유지됩니다.
-- 브라우저 캐시를 지우거나 기기를 바꾸면 데이터는 사라집니다.
-- 설정 화면의 "모든 데이터 초기화" 버튼으로 리셋할 수 있습니다.
+**iPhone (Safari):** Share button -> "Add to Home Screen"
+**Android (Chrome):** Menu (⋮) -> "Add to Home Screen"
 
-> 파일럿 테스트용 버전입니다. 여러 사용자 데이터 통합, 클라우드 백업,
-> 부모/교사 원격 조회는 향후 Firebase 연동이 필요합니다.
+---
+
+## Data storage
+
+- User data is saved in the device's browser (localStorage).
+- It persists across refreshes on the same device and browser.
+- Clearing browser cache or switching devices will erase the data.
+- Use the "Reset All Data" button in Settings to clear everything.
+
+> This is a pilot-test version. Multi-user data aggregation, cloud backup,
+> and remote parent/teacher access would require a future Firebase integration.
+
+---
+
+## About
+
+Trust In Minutes treats time as each student's most personal and limited asset.
+Study effort unlocks earned reward time, helping students allocate their time
+deliberately, motivate themselves through earned rewards, and build
+self-regulation through self-set rules.
+
+Developed by Andrew Paik.
