@@ -1419,9 +1419,9 @@ export default function App() {
 
         <div style={{ background:C.orangeSoft, borderRadius:14, padding:14, border:`1px solid ${C.orange}44` }}>
           <p style={{ color:C.orange, fontSize:12, margin:"0 0 8px", fontWeight:700 }}>⚠️ {T.walletCapTitle}</p>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:6, alignItems:"flex-start" }}>
             {allCats.map(cat=>(
-              <span key={cat.id} style={{ background:cat.soft, color:cat.color, fontSize:11, padding:"3px 10px", borderRadius:20, fontWeight:600 }}>{cat.emoji} {cat.label} {T.walletCapUnit(caps[cat.id])}</span>
+              <span key={cat.id} style={{ background:cat.soft, color:cat.color, fontSize:11, padding:"5px 12px", borderRadius:20, fontWeight:600 }}>{cat.emoji} {cat.label} {T.walletCapUnit(caps[cat.id])}</span>
             ))}
           </div>
         </div>

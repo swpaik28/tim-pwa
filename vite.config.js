@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "icon-192.png", "icon-512.png"],
       manifest: {
-        name: "Trust-in-Minutes",
-        short_name: "TiM",
+        name: "Trust In Minutes",
+        short_name: "Trust In Minutes",
         description: "공부에 투자한 만큼 보상을 공정하게 — 청소년 자기조절 학습 도구",
         theme_color: "#EEF0F7",
         background_color: "#EEF0F7",
