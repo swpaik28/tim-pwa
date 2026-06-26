@@ -147,6 +147,11 @@ const LANG = {
     timerReadyMsg:"지금 이 순간이 당신의 자산입니다",
     timerFocusMsg:"투자 중 — 약속을 지키고 있어요 💪",
     sessionDoneMsg:(s,r)=>`${s}분 투자 완료. 약속대로 ${r}분을 얻었어요 ✅`,
+    studyDonePopupTitle:"🎉 약속을 지켰어요!",
+    studyDonePopupBody:(s,e,c,r)=>`${s}분 집중 완료 — ${e} ${c} ${r}분이 지갑에 쏙 들어왔어요.\n시간을 투자한 당신, 멋져요!`,
+    rewardDonePopupTitle:"⏰ 보상 시간 종료!",
+    rewardDonePopupBody:(e,c,m)=>`${e} ${c} ${m}분 보상 시간이 끝났어요!\n잘 쉬었다면, 이제 다시 시간을 투자할 시간이에요 💪`,
+    popupConfirm:"확인",
     useRewardMsg:"충분히 벌었으니, 마음껏 누려도 돼요 🎁",
     unit:"분", cats:{ exercise:"운동", game:"게임", sns:"SNS", nap:"낮잠" },
   },
@@ -174,7 +179,7 @@ const LANG = {
     walletRemaining:"Remaining after use", walletCancel:"Cancel",
     walletStart:(n)=>`▶ Start ${n} min`, walletAll:"All",
     walletCapTitle:"Weekly Cap", walletCapUnit:(n)=>`max ${n} min/wk`,
-    noBalance:(c)=>`❌ No ${c} balance. Complete a session first!`,
+    noBalance:(c)=>`❌ No ${c} balance. Complete a study session first!`,
     overBalance:(n)=>`❌ Available: ${n} min. Cannot exceed!`,
     useNotify:(e,c,n)=>`${e} ${c} ${n} min — Enjoy!`,
     reportSub:"Time Report", reportTitle:"Weekly Analysis",
@@ -246,6 +251,11 @@ const LANG = {
     timerReadyMsg:"This moment is your asset",
     timerFocusMsg:"Investing — keeping your promise 💪",
     sessionDoneMsg:(s,r)=>`${s} min invested. You earned ${r} min, as promised ✅`,
+    studyDonePopupTitle:"🎉 Promise kept!",
+    studyDonePopupBody:(s,e,c,r)=>`${s} min of focus done — ${e} ${r} min of ${c} just landed in your wallet.\nSmart investment!`,
+    rewardDonePopupTitle:"⏰ Reward time's up!",
+    rewardDonePopupBody:(e,c,m)=>`Your ${e} ${m} min of ${c} is done!\nRecharged? Time to invest again 💪`,
+    popupConfirm:"Got it",
     useRewardMsg:"You earned it — enjoy every minute 🎁",
     unit:"min", cats:{ exercise:"Exercise", game:"Gaming", sns:"SNS", nap:"Nap" },
   },
@@ -870,7 +880,7 @@ function saveData(data) {
 export default function App() {
   const saved = loadSaved();
 
-  const [lang, setLang] = useState(saved.lang ?? "ko");
+  const [lang, setLang] = useState(saved.lang ?? "en");
   const [theme, setTheme] = useState(saved.theme ?? "light");
   // 테마 적용 (C 객체 갱신) — 렌더 전에 동기 실행
   applyTheme(theme);
@@ -888,6 +898,8 @@ export default function App() {
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  // 완료 축하 팝업 — {type:"study"|"reward", ...정보}
+  const [donePopup, setDonePopup] = useState(null);
   const [selCat, setSelCat] = useState(null);
   const [pickMins, setPickMins] = useState(10);
   const [surveyDraft, setSurveyDraft] = useState({ ...defaultSurvey });
@@ -903,8 +915,10 @@ export default function App() {
     }
   }, [screen]);
   const [studySecs, setStudySecs] = useState(0);
-  const [running, setRunning] = useState(false);
+  const [running, setRunning] = useState(saved.studyStartAt ? true : false);
   const [sessionDone, setSessionDone] = useState(false);
+  // 공부 타이머 시작 시각 (epoch ms) — 앱이 닫혀도 실제 경과시간 계산용
+  const [studyStartAt, setStudyStartAt] = useState(saved.studyStartAt ?? null);
   const [wallet, setWallet] = useState(saved.wallet ?? { exercise:0, game:0, sns:0, nap:0 });
   const [usedToday, setUsedToday] = useState(saved.usedToday ?? { exercise:0, game:0, sns:0, nap:0 });
   const [goalMin, setGoalMin] = useState(saved.goalMin ?? 180);
@@ -921,8 +935,8 @@ export default function App() {
   // ── 데이터 변경 시 자동 저장 ──
   useEffect(() => {
     const prev = loadSaved();
-    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey });
-  }, [lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey]);
+    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs });
+  }, [lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs]);
 
   // ── 슬로건 타이머 (앱 최상위 — 리렌더링에 안전) ──
   const [mottoIdx, setMottoIdx] = useState(new Date().getDay() % 7);
@@ -941,11 +955,13 @@ export default function App() {
   }, []);
 
   // ── 보상 타이머 state (앱 최상위 — 리렌더링에 안전) ──
-  const [rewardPhase, setRewardPhase] = useState("idle"); // "idle"|"select"|"running"|"done"
-  const [rewardCatId, setRewardCatId] = useState(null);
+  const [rewardPhase, setRewardPhase] = useState(saved.rewardEndAt ? "running" : "idle"); // "idle"|"select"|"running"|"done"
+  const [rewardCatId, setRewardCatId] = useState(saved.rewardCatId ?? null);
   const [rewardMins, setRewardMins] = useState(10);
   const [rewardSecsLeft, setRewardSecsLeft] = useState(0);
-  const [rewardTotalSecs, setRewardTotalSecs] = useState(0);
+  const [rewardTotalSecs, setRewardTotalSecs] = useState(saved.rewardTotalSecs ?? 0);
+  // 보상 타이머 종료 시각 (epoch ms) — 앱이 닫혀도 실제 경과시간 계산용
+  const [rewardEndAt, setRewardEndAt] = useState(saved.rewardEndAt ?? null);
   const rewardTimerRef = useRef(null);
 
   const playAlarm = () => {
@@ -973,23 +989,36 @@ export default function App() {
     setWallet(w=>({...w,[catId]:w[catId]-mins}));
     setUsedToday(u=>({...u,[catId]:u[catId]+mins}));
     notify(T.useNotify(cat.emoji, cat.label, mins));
-    // 타이머 시작
+    // 타이머 시작 — 종료 시각 기록
+    setRewardCatId(catId);
     setRewardMins(mins);
     setRewardTotalSecs(secs);
     setRewardSecsLeft(secs);
+    setRewardEndAt(Date.now() + secs * 1000);
     setRewardPhase("running");
-    clearInterval(rewardTimerRef.current);
-    rewardTimerRef.current = setInterval(() => {
-      setRewardSecsLeft(s => {
-        if (s <= 1) {
-          clearInterval(rewardTimerRef.current);
-          setRewardPhase("done");
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
   };
+
+  // 보상 카운트다운 — 종료시각 기준 (앱이 닫혀도 실제 시간 반영)
+  useEffect(() => {
+    if (rewardPhase === "running" && rewardEndAt) {
+      const tick = () => {
+        const left = Math.ceil((rewardEndAt - Date.now()) / 1000);
+        if (left <= 0) {
+          clearInterval(rewardTimerRef.current);
+          setRewardSecsLeft(0);
+          setRewardPhase("done");
+          setRewardEndAt(null);
+          const rcat = getCat(rewardCatId);
+          if (rcat) setDonePopup({ type:"reward", emoji:rcat.emoji, label:rcat.label, mins:rewardMins });
+        } else {
+          setRewardSecsLeft(left);
+        }
+      };
+      tick(); // 즉시 1회 — 앱 재진입 시 바로 반영
+      rewardTimerRef.current = setInterval(tick, 1000);
+    } else clearInterval(rewardTimerRef.current);
+    return () => clearInterval(rewardTimerRef.current);
+  }, [rewardPhase, rewardEndAt]);
 
   // done 감지 → 알람
   useEffect(() => {
@@ -1031,6 +1060,11 @@ export default function App() {
     setStudySecs(0);
     setRunning(false);
     setSessionDone(false);
+    setStudyStartAt(null);
+    setRewardPhase("idle");
+    setRewardCatId(null);
+    setRewardEndAt(null);
+    setRewardSecsLeft(0);
     setShowResetConfirm(false);
     notify(T.resetDone);
   };
@@ -1054,26 +1088,31 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (running) {
-      timerRef.current = setInterval(() => {
-        setStudySecs(s => {
-          if (s+1 >= GOAL_SECS && !sessionDone) {
-            clearInterval(timerRef.current);
-            setRunning(false); setSessionDone(true);
-            const cat = getCat(selReward);
-            setWallet(w=>({...w,[selReward]:w[selReward]+rewardPerSess}));
-            setDoneMin(d=>d+studyPerSess);
-            notify(T.notifyDone(studyPerSess, cat.emoji, cat.label, rewardPerSess));
-            return GOAL_SECS;
-          }
-          return s+1;
-        });
-      }, 1000);
+    if (running && studyStartAt) {
+      // 경과 시간을 시작시각 기준으로 계산 (앱이 닫혀도 실제 시간 반영)
+      const tick = () => {
+        const elapsed = Math.floor((Date.now() - studyStartAt) / 1000);
+        if (elapsed >= GOAL_SECS && !sessionDone) {
+          clearInterval(timerRef.current);
+          setStudySecs(GOAL_SECS);
+          setRunning(false); setSessionDone(true);
+          setStudyStartAt(null);
+          const cat = getCat(selReward);
+          setWallet(w=>({...w,[selReward]:w[selReward]+rewardPerSess}));
+          setDoneMin(d=>d+studyPerSess);
+          notify(T.notifyDone(studyPerSess, cat.emoji, cat.label, rewardPerSess));
+          setDonePopup({ type:"study", mins:studyPerSess, emoji:cat.emoji, label:cat.label, reward:rewardPerSess });
+        } else {
+          setStudySecs(Math.min(elapsed, GOAL_SECS));
+        }
+      };
+      tick(); // 즉시 1회 — 앱 재진입 시 바로 반영
+      timerRef.current = setInterval(tick, 1000);
     } else clearInterval(timerRef.current);
     return () => clearInterval(timerRef.current);
-  }, [running, sessionDone, selReward, lang, studyPerSess, rewardPerSess]);
+  }, [running, studyStartAt, sessionDone, selReward, lang, studyPerSess, rewardPerSess, GOAL_SECS]);
 
-  const resetTimer = () => { setStudySecs(0); setRunning(false); setSessionDone(false); };
+  const resetTimer = () => { setStudySecs(0); setRunning(false); setSessionDone(false); setStudyStartAt(null); };
 
   // ── 날짜별 히스토리 데이터 ──
   const todayStr = new Date().toISOString().slice(0,10);
@@ -1291,7 +1330,17 @@ export default function App() {
         <div style={{ display:"flex", gap:12 }}>
           {!sessionDone ? (
             <>
-              <button onClick={()=>setRunning(!running)} style={{ flex:1, padding:16, borderRadius:16, border:"none", background:running?C.orange:C.accent, color:"#fff", fontSize:16, fontWeight:700, cursor:"pointer" }}>{running?T.timerPause:T.timerStart}</button>
+              <button onClick={()=>{
+                if (running) {
+                  // 일시정지 — 시작시각 해제, 현재 경과초 유지
+                  setRunning(false);
+                  setStudyStartAt(null);
+                } else {
+                  // 시작/재개 — 이미 흐른 studySecs만큼 과거로 시작시각 설정
+                  setStudyStartAt(Date.now() - studySecs * 1000);
+                  setRunning(true);
+                }
+              }} style={{ flex:1, padding:16, borderRadius:16, border:"none", background:running?C.orange:C.accent, color:"#fff", fontSize:16, fontWeight:700, cursor:"pointer" }}>{running?T.timerPause:T.timerStart}</button>
               <button onClick={resetTimer} style={{ width:56, borderRadius:16, border:`1px solid ${C.border}`, background:C.card, color:C.textMuted, fontSize:18, cursor:"pointer" }}>↺</button>
             </>
           ) : (
@@ -1344,7 +1393,7 @@ export default function App() {
             <p style={{ color:C.textMuted, fontSize:12, margin:"0 0 16px", fontStyle:"italic" }}>
               🔔 {isKo ? "시간이 끝나면 알람이 울려요" : "Alarm will ring when time is up"}
             </p>
-            <button onClick={()=>{ clearInterval(rewardTimerRef.current); setRewardPhase("idle"); setRewardCatId(null); }}
+            <button onClick={()=>{ clearInterval(rewardTimerRef.current); setRewardPhase("idle"); setRewardCatId(null); setRewardEndAt(null); }}
               style={{ width:"100%", padding:13, borderRadius:12, border:`1px solid ${C.border}`, background:C.card, color:C.textMuted, fontSize:13, fontWeight:600, cursor:"pointer" }}>
               ⏹ {isKo ? "조기 종료" : "End Early"}
             </button>
@@ -1375,7 +1424,7 @@ export default function App() {
             <p style={{ color:C.textSub, fontSize:13, margin:"0 0 20px" }}>
               {isKo ? "공부하러 돌아갈 시간이에요 💪" : "Time to get back to studying 💪"}
             </p>
-            <button onClick={()=>{ setRewardPhase("idle"); setRewardCatId(null); setSelCat(null); }}
+            <button onClick={()=>{ setRewardPhase("idle"); setRewardCatId(null); setSelCat(null); setRewardEndAt(null); }}
               style={{ width:"100%", padding:14, borderRadius:12, border:"none", background:C.green, color:"#fff", fontSize:14, fontWeight:700, cursor:"pointer" }}>
               ✅ {isKo ? "확인" : "Done"}
             </button>
@@ -1829,6 +1878,28 @@ export default function App() {
       {/* ── 튜토리얼 팝업 ── */}
       {showTutorial && <TutorialSlider T={T} lang={lang} onClose={()=>setShowTutorial(false)}/>}
       {/* ── 데이터 초기화 확인 모달 ── */}
+      {/* ── 완료 축하 팝업 ── */}
+      {donePopup && (
+        <div style={{ position:"fixed", inset:0, zIndex:550, display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}
+          onClick={()=>setDonePopup(null)}>
+          <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0.6)" }}/>
+          <div style={{ position:"relative", width:"100%", maxWidth:330, background:C.card, borderRadius:24, padding:"28px 24px 24px", boxShadow:"0 20px 60px rgba(0,0,0,0.4)", textAlign:"center", animation:"fadeSlideIn 0.3s ease" }}
+            onClick={e=>e.stopPropagation()}>
+            <div style={{ fontSize:52, marginBottom:8, lineHeight:1 }}>{donePopup.type==="study" ? "🎉" : "⏰"}</div>
+            <p style={{ color:C.text, fontSize:18, fontWeight:800, margin:"0 0 12px" }}>
+              {donePopup.type==="study" ? T.studyDonePopupTitle : T.rewardDonePopupTitle}
+            </p>
+            <p style={{ color:C.textSub, fontSize:14, margin:"0 0 22px", lineHeight:1.65, whiteSpace:"pre-line" }}>
+              {donePopup.type==="study"
+                ? T.studyDonePopupBody(donePopup.mins, donePopup.emoji, donePopup.label, donePopup.reward)
+                : T.rewardDonePopupBody(donePopup.emoji, donePopup.label, donePopup.mins)}
+            </p>
+            <button onClick={()=>setDonePopup(null)} style={{ width:"100%", padding:15, borderRadius:14, border:"none", background:donePopup.type==="study" ? C.green : C.accent, color:"#fff", fontSize:15, fontWeight:700, cursor:"pointer" }}>
+              {T.popupConfirm}
+            </button>
+          </div>
+        </div>
+      )}
       {showResetConfirm && (
         <div style={{ position:"fixed", inset:0, zIndex:600, display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}
           onClick={()=>setShowResetConfirm(false)}>
