@@ -932,6 +932,16 @@ export default function App() {
   const [survey, setSurvey] = useState(saved.survey ?? defaultSurvey);
   const timerRef = useRef(null);
 
+  // ── 보상 타이머 state (앱 최상위 — 리렌더링에 안전) ──
+  const [rewardPhase, setRewardPhase] = useState(saved.rewardEndAt ? "running" : "idle"); // "idle"|"select"|"running"|"done"
+  const [rewardCatId, setRewardCatId] = useState(saved.rewardCatId ?? null);
+  const [rewardMins, setRewardMins] = useState(10);
+  const [rewardSecsLeft, setRewardSecsLeft] = useState(0);
+  const [rewardTotalSecs, setRewardTotalSecs] = useState(saved.rewardTotalSecs ?? 0);
+  // 보상 타이머 종료 시각 (epoch ms) — 앱이 닫혀도 실제 경과시간 계산용
+  const [rewardEndAt, setRewardEndAt] = useState(saved.rewardEndAt ?? null);
+  const rewardTimerRef = useRef(null);
+
   // ── 데이터 변경 시 자동 저장 ──
   useEffect(() => {
     const prev = loadSaved();
@@ -953,16 +963,6 @@ export default function App() {
     }, 4000); // 4초마다 전환
     return () => clearInterval(mottoTimerRef.current);
   }, []);
-
-  // ── 보상 타이머 state (앱 최상위 — 리렌더링에 안전) ──
-  const [rewardPhase, setRewardPhase] = useState(saved.rewardEndAt ? "running" : "idle"); // "idle"|"select"|"running"|"done"
-  const [rewardCatId, setRewardCatId] = useState(saved.rewardCatId ?? null);
-  const [rewardMins, setRewardMins] = useState(10);
-  const [rewardSecsLeft, setRewardSecsLeft] = useState(0);
-  const [rewardTotalSecs, setRewardTotalSecs] = useState(saved.rewardTotalSecs ?? 0);
-  // 보상 타이머 종료 시각 (epoch ms) — 앱이 닫혀도 실제 경과시간 계산용
-  const [rewardEndAt, setRewardEndAt] = useState(saved.rewardEndAt ?? null);
-  const rewardTimerRef = useRef(null);
 
   const playAlarm = () => {
     try {
