@@ -880,6 +880,33 @@ function saveData(data) {
 export default function App() {
   const saved = loadSaved();
 
+  // ── 날짜 넘김(daily rollover)을 렌더 전에 동기 계산 ──
+  // 마지막 사용일과 오늘이 다르면: 어제 실적을 이력에 확정하고, 오늘 값은 0에서 시작.
+  // wallet(보상 잔액)은 누적 유지. 이 결과로 초기 state를 정하므로 useEffect 순서에 의존하지 않음.
+  const _todayStr = new Date().toISOString().slice(0,10);
+  const _rolled = (() => {
+    const lastDate = saved.lastDate;
+    if (lastDate && lastDate !== _todayStr) {
+      const hist = { ...(saved.dailyHistory ?? {}) };
+      const hadActivity = (saved.doneMin > 0) ||
+        (saved.usedToday && Object.values(saved.usedToday).some(v => v > 0));
+      if (hadActivity) {
+        hist[lastDate] = {
+          study: saved.doneMin || 0,
+          exercise: saved.usedToday?.exercise || 0,
+          game: saved.usedToday?.game || 0,
+          sns: saved.usedToday?.sns || 0,
+          nap: saved.usedToday?.nap || 0,
+        };
+      }
+      return { rolled:true, dailyHistory:hist };
+    }
+    return { rolled:false, dailyHistory: saved.dailyHistory ?? {} };
+  })();
+  // rollover 시 오늘 값은 0, 아니면 저장값 복원
+  const initDoneMin   = _rolled.rolled ? 0 : (saved.doneMin ?? 0);
+  const initUsedToday = _rolled.rolled ? { exercise:0, game:0, sns:0, nap:0 } : (saved.usedToday ?? { exercise:0, game:0, sns:0, nap:0 });
+
   const [lang, setLang] = useState(saved.lang ?? "en");
   const [theme, setTheme] = useState(saved.theme ?? "light");
   // 테마 적용 (C 객체 갱신) — 렌더 전에 동기 실행
@@ -920,9 +947,9 @@ export default function App() {
   // 공부 타이머 시작 시각 (epoch ms) — 앱이 닫혀도 실제 경과시간 계산용
   const [studyStartAt, setStudyStartAt] = useState(saved.studyStartAt ?? null);
   const [wallet, setWallet] = useState(saved.wallet ?? { exercise:0, game:0, sns:0, nap:0 });
-  const [usedToday, setUsedToday] = useState(saved.usedToday ?? { exercise:0, game:0, sns:0, nap:0 });
+  const [usedToday, setUsedToday] = useState(initUsedToday);
   const [goalMin, setGoalMin] = useState(saved.goalMin ?? 180);
-  const [doneMin, setDoneMin] = useState(saved.doneMin ?? 0);
+  const [doneMin, setDoneMin] = useState(initDoneMin);
   const [selReward, setSelReward] = useState("exercise");
   const [notif, setNotif] = useState(null);
   const [parentShare, setParentShare] = useState(saved.parentShare ?? false);
@@ -945,7 +972,8 @@ export default function App() {
   // ── 데이터 변경 시 자동 저장 ──
   useEffect(() => {
     const prev = loadSaved();
-    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs });
+    const todayStr = new Date().toISOString().slice(0,10);
+    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, lastDate: todayStr });
   }, [lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs]);
 
   // ── 슬로건 타이머 (앱 최상위 — 리렌더링에 안전) ──
@@ -1121,7 +1149,10 @@ export default function App() {
     return d.toISOString().slice(0,10);
   };
   // 실제 사용 기록 — 저장된 값이 있으면 복원, 없으면 빈 객체 (신규 사용자)
-  const [dailyHistory, setDailyHistory] = useState(saved.dailyHistory ?? {});
+  const [dailyHistory, setDailyHistory] = useState(_rolled.dailyHistory);
+
+  // (날짜 넘김은 위에서 렌더 전에 동기 계산 완료 — _rolled 참조)
+
   // dailyHistory 변경 시 저장
   useEffect(() => {
     const prev = loadSaved();
