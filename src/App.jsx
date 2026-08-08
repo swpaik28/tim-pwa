@@ -84,7 +84,7 @@ const LANG = {
     avgStudy:"평균 공부", goalRate:"목표달성률", rewardUsed:"보상 사용",
     hypoTitle:"지금 나, 달라지고 있어?",
     hypos:["📚 공부시간 증가", "🧠 자기조절력", "🤝 갈등 감소", "🔥 연속 사용일"],
-    hypoDesc:["Baseline 대비 공부시간 증가율","주간 설문 자기조절 점수 기반","주간 갈등 횟수 감소율","목표 21일 연속 사용 대비 현재"],
+    hypoDesc:["Baseline 대비 공부시간 증가율","주간 설문 자기조절 점수 기반","주간 갈등 횟수 감소율","목표 7일 연속 사용 대비 현재"],
     surveyBtn:"📋 주간 설문 입력",
     surveyDone:"✅ 이번 주 설문 완료",
     noSurvey:"설문을 입력하면 가설이 실제 데이터로 계산됩니다",
@@ -117,7 +117,7 @@ const LANG = {
     dailyGoal:"하루 공부 목표", studyPerSess:"세션당 공부 시간", rewardPerSess:"세션당 적립 시간",
     rulePreview:(s,r)=>`📌 규칙: 공부 ${s}분 → 보상 ${r}분 적립`,
     secCap:"🚦 주간 보상 한도",
-    parentTitle:"부모/멘토 공유", parentSub:"주간 요약 간략히 전송",
+    parentTitle:"부모/멘토 공유", parentSub:"오늘의 요약 간략히 전송",
     saveBtn:"💾 설정 저장하기", saved:"✅ 설정이 저장되었어요!",
     tutorialTitle:"📖 앱 사용법",
     themeLabel:"화면 테마", themeDark:"🌙 다크", themeLight:"☀️ 라이트",
@@ -129,7 +129,7 @@ const LANG = {
       { icon:"🎁", title:"보상 지갑 — 보상 사용하기", body:"공부를 완료할 때마다 보상 시간이 쌓여요.\n\n① 하단 지갑 탭을 누르세요.\n② 사용할 보상 카테고리를 탭하세요.\n③ 원하는 시간(5분 단위)을 선택하고 ▶ 시작을 누르세요.\n\n주간 한도 안에서만 사용할 수 있어요. 한도는 설정에서 조정할 수 있어요." },
       { icon:"⏳", title:"보상 타이머 — 시간 지키기", body:"보상을 시작하면 카운트다운 타이머가 작동해요.\n남은 시간이 원형 링으로 표시되고,\n시간이 끝나면 알람 소리와 진동으로 알려줘요.\n\n⏹ 조기 종료 버튼으로 일찍 끝낼 수도 있어요.\n이 타이머가 핵심이에요 — 보상 시간을 정확히 지키는 게 공정한 규칙이에요!" },
       { icon:"📊", title:"리포트 — 주간 분석", body:"리포트 탭에서 내 한 주를 돌아볼 수 있어요.\n\n• 주간 바 차트: 요일별 공부 시간 (바를 탭하면 상세 보상 내역 확인)\n• ‹ 이전 버튼으로 지난 주 데이터도 볼 수 있어요\n• 주간 설문 입력 후 '지금 나, 달라지고 있어?' 지표가 계산돼요\n• 설정에서 공유를 켜면 부모님께 리포트를 전송할 수 있어요" },
-      { icon:"🔬", title:"지금 나, 달라지고 있어?", body:"매주 짧은 설문을 입력하면 4가지 변화 지표가 계산돼요.\n\n📚 공부시간 증가율 — 저번 주보다 공부가 늘었나요?\n🧠 자기조절력 — 보상을 얼마나 잘 조절했나요?\n🤝 갈등 감소 — 보상 때문에 싸운 횟수가 줄었나요?\n🔥 연속 사용일 — 며칠 연속으로 앱을 썼나요? (목표: 21일)\n\n설문은 리포트 탭 하단에서 입력할 수 있어요." },
+      { icon:"🔬", title:"지금 나, 달라지고 있어?", body:"매주 짧은 설문을 입력하면 4가지 변화 지표가 계산돼요.\n\n📚 공부시간 증가율 — 저번 주보다 공부가 늘었나요?\n🧠 자기조절력 — 보상을 얼마나 잘 조절했나요?\n🤝 갈등 감소 — 보상 때문에 싸운 횟수가 줄었나요?\n🔥 연속 사용일 — 며칠 연속으로 앱을 썼나요? (목표: 7일)\n\n설문은 리포트 탭 하단에서 입력할 수 있어요." },
       { icon:"⚙️", title:"설정 — 내게 맞게 조정하기", body:"설정 탭에서 규칙을 직접 정할 수 있어요.\n\n• 하루 목표: 하루에 목표하는 총 공부 시간\n• 세션당 공부: 한 번에 공부할 시간 (기본 60분)\n• 세션당 보상: 세션 완료 시 적립되는 보상 시간\n• 주간 보상 한도: 카테고리별 최대 사용 시간\n• 부모/멘토 공유: ON으로 켜면 리포트 탭에서 공유 버튼 활성화\n\n변경 후 반드시 💾 저장 버튼을 눌러주세요!" },
     ],
     phiTitle:"💡 Trust-in-Minutes 철학",
@@ -188,7 +188,7 @@ const LANG = {
     avgStudy:"Avg Study", goalRate:"Goal Rate", rewardUsed:"Rewards Used",
     hypoTitle:"Am I Getting Better?",
     hypos:["📚 Study Time Up", "🧠 Self-Control", "🤝 Less Conflict", "🔥 Streak"],
-    hypoDesc:["Study time increase vs baseline","Based on weekly survey self-regulation score","Weekly conflict reduction","Consecutive days used (target: 21 days)"],
+    hypoDesc:["Study time increase vs baseline","Based on weekly survey self-regulation score","Weekly conflict reduction","Consecutive days used (target: 7 days)"],
     surveyBtn:"📋 Fill Weekly Survey",
     surveyDone:"✅ This week's survey done",
     noSurvey:"Fill in the survey to calculate hypotheses from real data",
@@ -221,7 +221,7 @@ const LANG = {
     dailyGoal:"Daily Study Goal", studyPerSess:"Study per Session", rewardPerSess:"Reward per Session",
     rulePreview:(s,r)=>`📌 Rule: Study ${s} min → Earn ${r} min`,
     secCap:"🚦 Weekly Reward Cap",
-    parentTitle:"Parent / Mentor Share", parentSub:"Send a brief weekly summary",
+    parentTitle:"Parent / Mentor Share", parentSub:"Send a brief daily summary",
     saveBtn:"💾 Save Settings", saved:"✅ Settings saved!",
     tutorialTitle:"📖 How to Use",
     themeLabel:"Theme", themeDark:"🌙 Dark", themeLight:"☀️ Light",
@@ -233,7 +233,7 @@ const LANG = {
       { icon:"🎁", title:"Reward Wallet — Using Rewards", body:"Every completed study session adds reward time to your wallet.\n\n① Tap the Wallet tab at the bottom.\n② Tap the reward category you want to use.\n③ Set the time (in 5-min steps) and press ▶ Start.\n\nYou can only use rewards within your weekly limit. Adjust limits anytime in Settings." },
       { icon:"⏳", title:"Reward Timer — Keeping It Fair", body:"When you start a reward, a countdown timer begins.\nThe remaining time is shown as a ring, and an alarm + vibration notifies you when time is up.\n\nYou can end early with ⏹ End Early.\n\nThis timer is the core of the app — sticking to your reward time is what makes the system fair!" },
       { icon:"📊", title:"Report — Weekly Analysis", body:"The Report tab helps you review your week.\n\n• Weekly bar chart: study time by day (tap a bar to see reward details)\n• Use ‹ Prev to view past weeks\n• After filling in the weekly survey, your progress indicators are calculated\n• Turn on sharing in Settings to send reports to a parent or mentor" },
-      { icon:"🔬", title:"Am I Getting Better?", body:"Fill in a short weekly survey and 4 progress indicators are calculated.\n\n📚 Study time growth — Did you study more than last week?\n🧠 Self-control — How well did you manage your rewards?\n🤝 Less conflict — Fewer arguments over screen time?\n🔥 Streak — How many days in a row? (Goal: 21 days)\n\nFind the survey at the bottom of the Report tab." },
+      { icon:"🔬", title:"Am I Getting Better?", body:"Fill in a short weekly survey and 4 progress indicators are calculated.\n\n📚 Study time growth — Did you study more than last week?\n🧠 Self-control — How well did you manage your rewards?\n🤝 Less conflict — Fewer arguments over screen time?\n🔥 Streak — How many days in a row? (Goal: 7 days)\n\nFind the survey at the bottom of the Report tab." },
       { icon:"⚙️", title:"Settings — Make It Yours", body:"Set your own rules in the Settings tab.\n\n• Daily goal: total study time you aim for each day\n• Study per session: how long one session lasts (default: 60 min)\n• Reward per session: reward time earned per session\n• Weekly reward limits: max usage per category\n• Parent/mentor sharing: turn ON to enable the share button in Report\n\nAlways tap 💾 Save Settings after making changes!" },
     ],
     phiTitle:"💡 Philosophy",
@@ -286,8 +286,8 @@ function calcHypo(survey, weekData, goalMin, dailyHistory) {
     : null;
 
   // H4: 연속 사용일 — dailyHistory에서 오늘부터 역순으로 연속된 날 계산
-  // 목표: 21일(3주) 연속을 100%로 설정
-  const TARGET_STREAK = 21;
+  // 목표: 7일(1주) 연속을 100%로 설정
+  const TARGET_STREAK = 7;
   let streak = 0;
   const today = new Date();
   for (let i = 0; i < 60; i++) {
@@ -906,6 +906,7 @@ export default function App() {
   // rollover 시 오늘 값은 0, 아니면 저장값 복원
   const initDoneMin   = _rolled.rolled ? 0 : (saved.doneMin ?? 0);
   const initUsedToday = _rolled.rolled ? { exercise:0, game:0, sns:0, nap:0 } : (saved.usedToday ?? { exercise:0, game:0, sns:0, nap:0 });
+  const initSessionsToday = _rolled.rolled ? 0 : (saved.sessionsToday ?? 0);
 
   const [lang, setLang] = useState(saved.lang ?? "en");
   const [theme, setTheme] = useState(saved.theme ?? "light");
@@ -950,6 +951,7 @@ export default function App() {
   const [usedToday, setUsedToday] = useState(initUsedToday);
   const [goalMin, setGoalMin] = useState(saved.goalMin ?? 180);
   const [doneMin, setDoneMin] = useState(initDoneMin);
+  const [sessionsToday, setSessionsToday] = useState(initSessionsToday); // 실제 완료한 세션 횟수 (설정값과 무관하게 카운트)
   const [selReward, setSelReward] = useState("exercise");
   const [notif, setNotif] = useState(null);
   const [parentShare, setParentShare] = useState(saved.parentShare ?? false);
@@ -973,8 +975,8 @@ export default function App() {
   useEffect(() => {
     const prev = loadSaved();
     const todayStr = new Date().toISOString().slice(0,10);
-    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, lastDate: todayStr });
-  }, [lang, theme, wallet, usedToday, goalMin, doneMin, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs]);
+    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, lastDate: todayStr });
+  }, [lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs]);
 
   // ── 슬로건 타이머 (앱 최상위 — 리렌더링에 안전) ──
   const [mottoIdx, setMottoIdx] = useState(new Date().getDay() % 7);
@@ -1077,6 +1079,7 @@ export default function App() {
     setWallet({ exercise:0, game:0, sns:0, nap:0 });
     setUsedToday({ exercise:0, game:0, sns:0, nap:0 });
     setDoneMin(0);
+    setSessionsToday(0);
     setDailyHistory({});
     setGoalMin(180);
     setStudyPerSess(60);
@@ -1098,12 +1101,11 @@ export default function App() {
   };
 
   // ── 공유 텍스트 & 액션 (앱 레벨 — 리렌더링에 안전) ──
-  const shareActive = weekData.filter(d=>d>0);
-  const shareGoalDays = weekData.filter(d=>d>=goalMin).length;
-  const shareGoalPct = shareActive.length ? Math.round((shareGoalDays/shareActive.length)*100) : 0;
+  // 데일리(오늘) 기준 리포트
+  const shareGoalPctToday = goalMin>0 ? Math.round((doneMin/goalMin)*100) : 0;
   const shareText = lang==="ko"
-    ? `[Trust-in-Minutes 주간 리포트]\n\n📚 총 공부: ${shareActive.reduce((a,b)=>a+b,0)}분\n🎯 목표달성률: ${shareGoalPct}%\n🏆 완료 세션: ${shareActive.length}회\n\n🎁 보상 사용\n${allCats.map(c=>`  ${c.emoji} ${c.label}: ${usedToday[c.id]}분`).join("\n")}${survey.submitted?`\n\n📊 자기조절: ${survey.d2}/5점\n⚡ 갈등 횟수: ${survey.d1||0}회`:""}\n\n✅ "투자한 만큼 공정하게 — Trust-in-Minutes"`
-    : `[Trust-in-Minutes Weekly Report]\n\n📚 Study: ${shareActive.reduce((a,b)=>a+b,0)} min\n🎯 Goal rate: ${shareGoalPct}%\n🏆 Sessions: ${shareActive.length}\n\n🎁 Rewards used\n${allCats.map(c=>`  ${c.emoji} ${c.label}: ${usedToday[c.id]} min`).join("\n")}${survey.submitted?`\n\n📊 Self-reg: ${survey.d2}/5\n⚡ Conflicts: ${survey.d1||0}`:""}\n\n✅ "Earn fairly what you invest — Trust-in-Minutes"`;
+    ? `[Trust-in-Minutes 오늘의 리포트]\n\n📚 오늘 공부: ${doneMin}분\n🎯 목표달성률: ${shareGoalPctToday}% (목표 ${goalMin}분)\n🏆 완료 세션: ${sessionsToday}회\n\n🎁 오늘 보상 사용\n${allCats.map(c=>`  ${c.emoji} ${c.label}: ${usedToday[c.id]}분`).join("\n")}${survey.submitted?`\n\n📊 자기조절: ${survey.d2}/5점\n⚡ 갈등 횟수: ${survey.d1||0}회`:""}\n\n✅ "투자한 만큼 공정하게 — Trust-in-Minutes"`
+    : `[Trust-in-Minutes Daily Report]\n\n📚 Today's study: ${doneMin} min\n🎯 Goal rate: ${shareGoalPctToday}% (goal ${goalMin} min)\n🏆 Sessions: ${sessionsToday}\n\n🎁 Rewards used today\n${allCats.map(c=>`  ${c.emoji} ${c.label}: ${usedToday[c.id]} min`).join("\n")}${survey.submitted?`\n\n📊 Self-reg: ${survey.d2}/5\n⚡ Conflicts: ${survey.d1||0}`:""}\n\n✅ "Earn fairly what you invest — Trust-in-Minutes"`;
   const doShare = () => {
     if (navigator.share) {
       navigator.share({ title:"Trust-in-Minutes", text:shareText }).catch(()=>{});
@@ -1128,6 +1130,7 @@ export default function App() {
           const cat = getCat(selReward);
           setWallet(w=>({...w,[selReward]:w[selReward]+rewardPerSess}));
           setDoneMin(d=>d+studyPerSess);
+          setSessionsToday(n=>n+1); // 실제 완료 세션 +1
           notify(T.notifyDone(studyPerSess, cat.emoji, cat.label, rewardPerSess));
           setDonePopup({ type:"study", mins:studyPerSess, emoji:cat.emoji, label:cat.label, reward:rewardPerSess });
         } else {
@@ -1303,7 +1306,7 @@ export default function App() {
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14 }}>
           {[
             {icon:"⏱", label:T.balanceLabel, value:totalWallet, unit:T.balanceUnit, color:C.green},
-            {icon:"📚", label:T.sessionLabel, value:Math.floor(doneMin / studyPerSess), unit:T.sessionUnit, color:C.accent},
+            {icon:"📚", label:T.sessionLabel, value:sessionsToday, unit:T.sessionUnit, color:C.accent},
           ].map((s,i)=>(
             <div key={i} style={{ background:C.card, borderRadius:16, padding:16, border:`1px solid ${C.border}` }}>
               <p style={{ color:C.textMuted, fontSize:10, margin:"0 0 8px", letterSpacing:1 }}>{s.icon} {s.label}</p>
@@ -1606,8 +1609,11 @@ export default function App() {
   function ReportScreen() {
     const active = weekData.filter(d=>d>0);
     const avgStudy = active.length ? Math.round(active.reduce((a,b)=>a+b,0)/active.length) : 0;
-    const goalDays = weekData.filter(d=>d>=goalMin).length;
-    const goalRatePct = active.length ? Math.round((goalDays/active.length)*100) : 0;
+    // 목표달성률 = 공부한 날들의 평균 달성 비율 (하루 목표 대비, 100% 상한)
+    // 예: 150/180분인 날은 83%로 반영 (이전엔 100% 못 채우면 0으로 처리돼 버그였음)
+    const goalRatePct = active.length
+      ? Math.round(active.reduce((a,d)=>a+Math.min(d/goalMin,1),0)/active.length*100)
+      : 0;
     const [weekOffset, setWeekOffset] = useState(0); // 0=이번주, 1=지난주, ...
     const [selectedBarIdx, setSelectedBarIdx] = useState(null);
     const isKo = lang === "ko";
@@ -1971,8 +1977,8 @@ export default function App() {
               </p>
               <button onClick={()=>setShowSharePopup(false)} style={{ background:"none", border:"none", color:C.textMuted, fontSize:22, cursor:"pointer", lineHeight:1, padding:0 }}>✕</button>
             </div>
-            <div style={{ background:"#071210", margin:"0 16px 16px", borderRadius:14, padding:"14px 16px", border:`1px solid ${C.green}33` }}>
-              <pre style={{ color:C.textSub, fontSize:12, margin:0, lineHeight:1.8, fontFamily:"monospace", whiteSpace:"pre-wrap" }}>{shareText}</pre>
+            <div style={{ background:"#0A1F18", margin:"0 16px 16px", borderRadius:14, padding:"14px 16px", border:`1px solid ${C.green}55` }}>
+              <pre style={{ color:"#E8F5E9", fontSize:12, margin:0, lineHeight:1.8, fontFamily:"monospace", whiteSpace:"pre-wrap" }}>{shareText}</pre>
             </div>
             <div style={{ display:"flex", gap:10, padding:"0 16px" }}>
               <button onClick={()=>setShowSharePopup(false)} style={{ flex:1, padding:14, borderRadius:14, border:`1px solid ${C.border}`, background:C.card, color:C.textMuted, fontSize:13, fontWeight:600, cursor:"pointer" }}>
