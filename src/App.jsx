@@ -293,7 +293,7 @@ function calcHypo(survey, weekData, goalMin, dailyHistory) {
   for (let i = 0; i < 60; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
-    const str = d.toISOString().slice(0,10);
+    const str = localDateStr(d);
     if (dailyHistory[str] && dailyHistory[str].study > 0) {
       streak++;
     } else if (i > 0) { // 오늘은 아직 공부 안 했을 수 있으니 첫날은 패스
@@ -866,6 +866,21 @@ function HomePortfolio({ dailyHistory, todayStr, T, lang }) {
 // ── localStorage 저장/복원 헬퍼 ───────────────────────────────
 // 아티팩트 미리보기에서는 막혀있지만, 실제 배포 환경(Vercel 등)에서는 정상 작동
 const STORAGE_KEY = "trust-in-minutes-data";
+
+// 사용자 현지 시간대 기준 날짜 문자열 (YYYY-MM-DD)
+// toISOString()은 UTC 기준이라 한국 등에서 자정~오전 사이 날짜가 하루 밀리는 버그가 있어 직접 계산
+function localDateStr(dt = new Date()) {
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, "0");
+  const d = String(dt.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+// n일 전 현지 날짜 문자열
+function localDateStrAgo(daysAgo) {
+  const d = new Date();
+  d.setDate(d.getDate() - daysAgo);
+  return localDateStr(d);
+}
 function loadSaved() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -883,7 +898,7 @@ export default function App() {
   // ── 날짜 넘김(daily rollover)을 렌더 전에 동기 계산 ──
   // 마지막 사용일과 오늘이 다르면: 어제 실적을 이력에 확정하고, 오늘 값은 0에서 시작.
   // wallet(보상 잔액)은 누적 유지. 이 결과로 초기 state를 정하므로 useEffect 순서에 의존하지 않음.
-  const _todayStr = new Date().toISOString().slice(0,10);
+  const _todayStr = localDateStr();
   const _rolled = (() => {
     const lastDate = saved.lastDate;
     if (lastDate && lastDate !== _todayStr) {
@@ -906,7 +921,10 @@ export default function App() {
   // rollover 시 오늘 값은 0, 아니면 저장값 복원
   const initDoneMin   = _rolled.rolled ? 0 : (saved.doneMin ?? 0);
   const initUsedToday = _rolled.rolled ? { exercise:0, game:0, sns:0, nap:0 } : (saved.usedToday ?? { exercise:0, game:0, sns:0, nap:0 });
-  const initSessionsToday = _rolled.rolled ? 0 : (saved.sessionsToday ?? 0);
+  // 저장된 세션 카운트가 있으면 사용, 없으면(기존 사용자 전환) 오늘 공부시간으로 1회 추정
+  const initSessionsToday = _rolled.rolled
+    ? 0
+    : (saved.sessionsToday ?? (saved.doneMin && saved.studyPerSess ? Math.floor(saved.doneMin / saved.studyPerSess) : 0));
 
   const [lang, setLang] = useState(saved.lang ?? "en");
   const [theme, setTheme] = useState(saved.theme ?? "light");
@@ -974,7 +992,7 @@ export default function App() {
   // ── 데이터 변경 시 자동 저장 ──
   useEffect(() => {
     const prev = loadSaved();
-    const todayStr = new Date().toISOString().slice(0,10);
+    const todayStr = localDateStr();
     saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, lastDate: todayStr });
   }, [lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs]);
 
@@ -1058,8 +1076,8 @@ export default function App() {
   useEffect(() => () => clearInterval(rewardTimerRef.current), []);
 
   // 최근 7일 공부시간 — 실제 기록에서 파생 (오늘 포함)
-  const _today = new Date().toISOString().slice(0,10);
-  const _dstr = (daysAgo) => { const d=new Date(); d.setDate(d.getDate()-daysAgo); return d.toISOString().slice(0,10); };
+  const _today = localDateStr();
+  const _dstr = (daysAgo) => localDateStrAgo(daysAgo);
   const _hist = saved.dailyHistory ?? {};
   const weekData = [6,5,4,3,2,1,0].map(ago => {
     const str = _dstr(ago);
@@ -1146,10 +1164,10 @@ export default function App() {
   const resetTimer = () => { setStudySecs(0); setRunning(false); setSessionDone(false); setStudyStartAt(null); };
 
   // ── 날짜별 히스토리 데이터 ──
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = localDateStr();
   const getDateStr = (daysAgo) => {
     const d = new Date(); d.setDate(d.getDate() - daysAgo);
-    return d.toISOString().slice(0,10);
+    return localDateStr(d);
   };
   // 실제 사용 기록 — 저장된 값이 있으면 복원, 없으면 빈 객체 (신규 사용자)
   const [dailyHistory, setDailyHistory] = useState(_rolled.dailyHistory);
@@ -1627,7 +1645,7 @@ export default function App() {
       monday.setDate(today.getDate() - ((dow+6)%7) - offset*7);
       return Array.from({length:7}, (_,i) => {
         const d = new Date(monday); d.setDate(monday.getDate()+i);
-        return d.toISOString().slice(0,10);
+        return localDateStr(d);
       });
     };
 
