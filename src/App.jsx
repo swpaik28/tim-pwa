@@ -970,7 +970,7 @@ export default function App() {
   const [goalMin, setGoalMin] = useState(saved.goalMin ?? 180);
   const [doneMin, setDoneMin] = useState(initDoneMin);
   const [sessionsToday, setSessionsToday] = useState(initSessionsToday); // 실제 완료한 세션 횟수 (설정값과 무관하게 카운트)
-  const [selReward, setSelReward] = useState("exercise");
+  const [selReward, setSelReward] = useState(saved.selReward ?? "exercise");
   const [notif, setNotif] = useState(null);
   const [parentShare, setParentShare] = useState(saved.parentShare ?? false);
   const [studyPerSess, setStudyPerSess] = useState(saved.studyPerSess ?? 60);
@@ -993,8 +993,8 @@ export default function App() {
   useEffect(() => {
     const prev = loadSaved();
     const todayStr = localDateStr();
-    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, lastDate: todayStr });
-  }, [lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs]);
+    saveData({ ...prev, lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, selReward, lastDate: todayStr });
+  }, [lang, theme, wallet, usedToday, goalMin, doneMin, sessionsToday, parentShare, studyPerSess, rewardPerSess, caps, survey, studyStartAt, rewardEndAt, rewardCatId, rewardTotalSecs, selReward]);
 
   // ── 슬로건 타이머 (앱 최상위 — 리렌더링에 안전) ──
   const [mottoIdx, setMottoIdx] = useState(new Date().getDay() % 7);
